@@ -1,31 +1,24 @@
-Public class Solution{
-	public int coinChange(int[] coins, int amount){
-		if(amount <1){
-			return 0;
-		}
-		return coinChange(coins,amount, new int [amount]);
-	}
+class Solution {
+public:
+    int coinChange(vector<int>& coins, int amount) {
+        vector<int> dp(amount+1, 0);
+        return help(dp, amount,coins);
+    }
+private:
+    int help(vector<int>& dp, int amount,vector<int>& coins){
+        if(amount == 0) return 0;
+        if(dp[amount] != 0) return dp[amount];
+        int res = amount+1;
 
-	private int coinChange(int[] coins, int rem, int[] count){
-		if(rem<0){
-			return -1;
-		}
-		if(rem==0){
-		return 0;
-		}
-		if(count[rem-1]!=0){
-			return count[rem-1];
-		}
-		int min=Integer.MAX_VALUE;
+        for(auto coin : coins){
+            if(amount - coin < 0) continue;
 
-		for(int coin:coins){
-			int res = coinChange(coins,rem-coin,count);
-			if(res>=0 && res<min){
-				min=1+res;
-			}
-		}
-
-		count[rem-1]=(min==Integer.MAX_VALUE)?-1:min;
-		return count[rem-1];
-	}	
-}
+            int subproblem = help(dp,amount-coin,coins);
+            if(subproblem == -1) continue;
+            res = min(res, 1+subproblem);
+            
+        }
+        dp[amount] = res == (amount+1)? -1 : res;
+        return dp[amount] ;
+    }
+};
